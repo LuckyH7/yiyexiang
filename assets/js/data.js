@@ -200,6 +200,14 @@
     'HS-WD-004': 'FC-2026-0908'
   };
 
+  /* 商品 → 溯源批次（认养专属、组合礼盒、非茶类无单一批次） */
+  const productBatch = {
+    p1: 'FC-2026-0512',
+    p2: 'FC-2026-0418',
+    p3: 'FC-2026-0427',
+    p5: 'FC-2026-0908'
+  };
+
   /* ───── 关于 ───── */
   const arch = [
     { e: 'LAYER 01', h: '感知采集', p: '监测点位布设方案：土壤/气象传感器选型与安装位置；演示环境以公开气象数据 + 模拟土壤参数驱动，可直连实机。' },
@@ -238,7 +246,7 @@
 
   window.DATA = {
     TEA_ICON, heroStats, metricDefs, pains, techs, impacts, kbDist,
-    plots, alertsBase, calendar, trees, products, batches, batchIndex,
+    plots, alertsBase, calendar, trees, products, batches, batchIndex, productBatch,
     arch, specs, impactMini, dataNotes
   };
 })();

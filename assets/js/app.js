@@ -24,12 +24,15 @@
     sort: 'default',
     cart: {},
     adopted: [],
+    orders: [],
     live: {}
   };
   try { state.cart = JSON.parse(localStorage.getItem('yy_cart') || '{}'); } catch (e) { state.cart = {}; }
   try { state.adopted = JSON.parse(localStorage.getItem('yy_adopt') || '[]'); } catch (e) { state.adopted = []; }
+  try { state.orders = JSON.parse(localStorage.getItem('yy_orders') || '[]'); } catch (e) { state.orders = []; }
   const saveCart = () => localStorage.setItem('yy_cart', JSON.stringify(state.cart));
   const saveAdopt = () => localStorage.setItem('yy_adopt', JSON.stringify(state.adopted));
+  const saveOrders = () => localStorage.setItem('yy_orders', JSON.stringify(state.orders));
 
   /* ───── 通用 UI ───── */
   function toast(msg) {
@@ -278,7 +281,7 @@
       <div class="modal-body">
         <div class="modal-banner" style="--tc:${t.color}">${D.TEA_ICON}</div>
         <div class="tree-variety" style="margin-bottom:10px">${t.code} · ${esc(t.variety)}</div>
-        <p class="prose">${esc(t.note)} 香气特征：${esc(t.aroma)}。认养期 1 年，春季单株采制后直寄到家，附全年生长数据记录与专属溯源码。</p>
+        <p class="prose">${esc(t.note)} 香气特征：${esc(t.aroma)}。认养期 1 年，附全年生长数据记录与专属溯源码；春季采制后的寄送与售后将在生产版依托合作社现有渠道落实，本演示版不产生真实发货。</p>
         <div class="detail-grid">
           <div><label>海拔</label><b>${t.alt} m</b></div><div><label>树龄</label><b>${t.age} 年</b></div>
           <div><label>预计成茶</label><b>${esc(t.yield)} / 年</b></div><div><label>认养费</label><b>¥${t.price} / 份</b></div>
@@ -290,8 +293,8 @@
           <div class="form-row"><label>单位 / 身份（选填）</label><input id="adDept" placeholder="如：学校、企业、家庭或个人茶友"></div>
           <div class="form-row"><label>认养年限</label><select id="adYears"><option value="1">1 年</option><option value="2">2 年（9 折）</option><option value="3">3 年（85 折）</option></select></div>
         </div>
-        <div class="form-row"><label>联系电话（选填，用于寄送春茶）</label><input id="adPhone" placeholder="仅本地保存，不上传"></div>
-        <p style="font-size:12px;color:#5A6B60;margin-top:4px">认养费分配：茶农 70% · 平台运维 20% · 学校乡村振兴公益基金 10%。本演示版不产生真实支付，份额占用记录仅保存在本机浏览器。</p>
+        <div class="form-row"><label>联系电话（选填，生产版用于寄送春茶；仅保存在本机）</label><input id="adPhone" placeholder="仅本地保存，不上传"></div>
+        <p style="font-size:12px;color:#5A6B60;margin-top:4px">认养费分配：茶农 71% · 平台运维 19% · 学校乡村振兴公益基金 10%。本演示版不产生真实支付，提交即表示同意认养记录（含联系电话）仅保存在本机浏览器。</p>
       </div>
       <div class="modal-foot"><button class="btn btn-ghost modal-close">再看看</button><button class="btn btn-primary" id="adSubmit" ${remain > 0 ? '' : 'disabled'}>${remain > 0 ? `确认认养 · ¥${t.price} / 份` : '份额已认领满'}</button></div>`);
     $('#adSubmit').addEventListener('click', () => {
@@ -303,7 +306,7 @@
       /* 证书编号确定性：树代号 + 年份 + 本机序号（含示例台账预置数），同一记录重开页面不变化 */
       const seq = String((t.taken || 0) + localTaken(t.code) + 1).padStart(3, '0');
       const code2 = 'YY-' + t.code.slice(3) + '-' + new Date().getFullYear() + '-' + seq;
-      const rec = { code: code2, tree: t.name, treeCode: t.code, shareG: shareG(t), name, dept: $('#adDept').value.trim(), years, price: Math.round(t.price * discount), date: new Date().toLocaleDateString('zh-CN') };
+      const rec = { code: code2, tree: t.name, treeCode: t.code, shareG: shareG(t), name, dept: $('#adDept').value.trim(), phone: $('#adPhone').value.trim(), years, price: Math.round(t.price * discount), date: new Date().toLocaleDateString('zh-CN') };
       state.adopted.push(rec); saveAdopt();
       showCert(rec);
       renderTrees();
@@ -344,6 +347,7 @@
           <div class="cert-sub">一叶知乡 · 让每一棵茶树都有主人</div>
           <div class="cert-info">
             <div><label>认养人</label><b>${esc(rec.name)}</b></div>
+            ${rec.phone ? `<div><label>联系电话</label><b>${esc(rec.phone)}</b></div>` : ''}
             <div><label>认养茶树</label><b>${esc(rec.tree)}</b></div>
             <div><label>茶树编号</label><b>${esc(rec.treeCode)}</b></div>
             <div><label>本份成茶</label><b>约 ${rec.shareG || '—'} g / 年</b></div>
@@ -372,7 +376,7 @@
   function openMyAdopts() {
     const list = state.adopted;
     const body = list.length ? `<ul class="cart-list">${list.map((r, i) => `<li>
-      <div class="ci"><strong>${esc(r.tree)}</strong><span>${esc(r.name)} · ${esc(r.code)} · ${esc(r.date)}</span></div>
+      <div class="ci"><strong>${esc(r.tree)}</strong><span>${esc(r.name)}${r.phone ? ' · ' + esc(r.phone) : ''} · ${esc(r.code)} · ${esc(r.date)}</span></div>
       <button class="btn btn-ghost btn-sm" data-cert="${i}">查看证书</button>
     </li>`).join('')}</ul>` : '<div class="empty">还没有认养记录，去挑一棵茶树吧。</div>';
     modal(`<div class="modal-head"><h3>我的认养</h3><button class="modal-close">×</button></div>
@@ -430,6 +434,11 @@
     const p = D.products.find(x => x.id === id); toast(`已加入购物车 · ${p.name}`);
   }
   function renderShop() {
+    const bar = $('#shopBar');
+    if (bar) {
+      bar.innerHTML = `<div><b>${D.products.length}</b>款商品</div><div><b>${state.orders.length}</b>笔历史订单</div><button class="my-adopt-link" id="myOrdersBtn" type="button">我的订单 ›</button>`;
+      $('#myOrdersBtn').addEventListener('click', openOrders);
+    }
     $('#shopGrid').innerHTML = D.products.map(p => `
       <article class="product">
         <div class="product-visual" style="--tc:${p.color}">
@@ -470,9 +479,85 @@
     }));
     $$('[data-plus]').forEach(b => b.addEventListener('click', () => { addToCart(b.dataset.plus); openCart(); }));
     $('#checkout').addEventListener('click', () => {
-      const no = 'YY' + Date.now().toString().slice(-9);
-      state.cart = {}; saveCart(); updateCartBadge(); closeModal();
-      toast(`订单 ${no} 已生成（演示）`);
+      const lines = items.map(x => ({ id: x.p.id, name: x.p.name, spec: x.p.spec, price: x.p.price, n: x.n }));
+      const farmer = Math.round(total * 0.71);
+      const ops = Math.round(total * 0.19);
+      const rec = {
+        no: nextOrderNo(),
+        date: new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-'),
+        items: lines, total, farmer, ops, fund: total - farmer - ops,
+        batch: orderBatch(lines),
+        status: '待支付 · 演示版'
+      };
+      state.orders.unshift(rec); saveOrders();
+      state.cart = {}; saveCart(); updateCartBadge(); renderShop();
+      toast(`订单 ${rec.no} 已生成`);
+      openOrderDetail(0);
+    });
+  }
+
+  /* ───── 历史订单 ───── */
+  function nextOrderNo() {
+    const d = new Date();
+    const ymd = '' + d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+    const n = state.orders.filter(o => o.no.includes('-' + ymd + '-')).length;
+    return `YYD-${ymd}-${String(n + 1).padStart(3, '0')}`;
+  }
+  /* 订单里第一件可溯源的茶所对应的批次；认养专属茶取最近一次认养的茶树批次 */
+  function orderBatch(lines) {
+    for (const x of lines) {
+      if (x.id === 'p4') {
+        const last = state.adopted[state.adopted.length - 1];
+        if (last && D.batchIndex[last.treeCode]) return D.batchIndex[last.treeCode];
+        continue;
+      }
+      if (D.productBatch[x.id]) return D.productBatch[x.id];
+    }
+    return null;
+  }
+  function openOrders() {
+    const list = state.orders;
+    const body = list.length ? `<ul class="order-list">${list.map((o, i) => `<li>
+      <div class="order-row"><b>${esc(o.no)}</b><span class="order-st">${esc(o.status)}</span></div>
+      <div class="order-line">${o.items.map(x => `${esc(x.name)} × ${x.n}`).join(' · ')}</div>
+      <div class="order-row order-row-2"><span>${esc(o.date)}</span><b>¥${o.total}</b></div>
+      <button class="btn btn-ghost btn-sm order-open" data-ord="${i}" type="button">订单详情</button>
+    </li>`).join('')}</ul>` : '<div class="empty">还没有订单。去商城挑一罐春茶，结算后会在这里留档。</div>';
+    modal(`<div class="modal-head"><h3>我的订单</h3><button class="modal-close">×</button></div>
+      <div class="modal-body"><p class="page-note" style="margin:0 0 12px">共 ${list.length} 笔 · 订单只保存在本机浏览器，演示版不产生真实支付与发货。</p>${body}</div>
+      <div class="modal-foot"><button class="btn btn-primary modal-close">关闭</button></div>`);
+    $$('[data-ord]').forEach(b => b.addEventListener('click', () => openOrderDetail(+b.dataset.ord)));
+  }
+  function openOrderDetail(i) {
+    const o = state.orders[i];
+    if (!o) return;
+    const rows = o.items.map(x => `<li>
+      <div class="ci"><strong>${esc(x.name)}</strong><span>${esc(x.spec)} · ¥${x.price} × ${x.n}</span></div>
+      <b style="font-family:var(--font-serif);color:#1F4736">¥${x.price * x.n}</b>
+    </li>`).join('');
+    const b = o.batch && D.batches[o.batch];
+    modal(`<div class="modal-head"><h3>订单 ${esc(o.no)}</h3><button class="modal-close">×</button></div>
+      <div class="modal-body">
+        <div class="order-meta"><span>下单时间 ${esc(o.date)}</span><span class="order-st">${esc(o.status)}</span></div>
+        <ul class="cart-list">${rows}</ul>
+        <div class="cart-total"><span>合计</span><b>¥${o.total}</b></div>
+        <div class="order-split">
+          <h4>收益分配（方案测算）</h4>
+          <div class="split-row"><span>茶农</span><small>71%</small><b>¥${o.farmer}</b></div>
+          <div class="split-row"><span>平台运维与物流</span><small>19%</small><b>¥${o.ops}</b></div>
+          <div class="split-row"><span>乡村振兴公益基金</span><small>10%</small><b>¥${o.fund}</b></div>
+        </div>
+        ${b
+        ? `<div class="order-trace"><span>对应批次 <b>${esc(o.batch)}</b> · ${esc(b.name)}</span><button class="btn btn-ghost btn-sm" id="ordTrace" type="button">查看溯源</button></div>`
+        : `<p class="page-note" style="margin-top:12px">该订单含组合装或非茶类商品，无单一批次，可到「茶叶溯源」分别查询。</p>`}
+        <p class="page-note" style="margin-top:10px">订单号由日期 + 当日序号确定生成，同一笔订单重开页面不会变；订单与购物车一样只存在本机浏览器，未接入支付与后台台账。</p>
+      </div>
+      <div class="modal-foot"><button class="btn btn-ghost" id="ordList">我的订单</button><button class="btn btn-primary modal-close">完成</button></div>`);
+    $('#ordList').addEventListener('click', openOrders);
+    if (b) $('#ordTrace').addEventListener('click', () => {
+      closeModal(); go('trace');
+      if ($('#traceInput')) $('#traceInput').value = o.batch;
+      renderTrace(o.batch);
     });
   }
 
