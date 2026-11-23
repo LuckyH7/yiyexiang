@@ -1,0 +1,19 @@
+{
+  "name": "一叶知乡 · 凤凰单丛茶数字认养与AI助农平台",
+  "short_name": "一叶知乡",
+  "description": "把凤凰单丛的生长数据搬上屏幕，让每一棵茶树都有主人。数字认养、环境监测、农技问答、全链路溯源。",
+  "lang": "zh-CN",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F6F1E7",
+  "theme_color": "#1F4736",
+  "icons": [
+    {
+      "src": "assets/img/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

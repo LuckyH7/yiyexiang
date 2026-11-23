@@ -135,8 +135,13 @@
 
   /** 水平堆叠条（收益分配） */
   function stacked(container, items, opts = {}) {
-    const w = opts.w || 720, h = opts.h || 150;
+    const w = opts.w || 720;
     const pad = 22, barY = 28, barH = 34;
+    // 说明文字按 54 字折行，避免长句被 SVG 边界裁掉
+    const note = opts.note || '';
+    const lines = [];
+    for (let i = 0; i < note.length; i += 54) lines.push(note.slice(i, i + 54));
+    const h = (opts.h || 150) + Math.max(0, lines.length - 1) * 17;
     const total = items.reduce((a, b) => a + b.value, 0) || 1;
     let g = '', x = pad;
     const iw = w - pad * 2;
@@ -153,7 +158,9 @@
       g += `<text x="${lx + 17}" y="96" font-size="12" fill="#33463C">${esc(it.label)}</text>`;
       lx += Math.max(150, it.label.length * 13 + 40);
     });
-    g += `<text x="${pad}" y="128" font-size="11.5" fill="#8A9A90">${esc(opts.note || '')}</text>`;
+    lines.forEach((ln, i) => {
+      g += `<text x="${pad}" y="${126 + i * 17}" font-size="11.5" fill="#8A9A90">${esc(ln)}</text>`;
+    });
     container.innerHTML = svgWrap(w, h, g);
   }
 

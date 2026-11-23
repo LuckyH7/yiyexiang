@@ -111,14 +111,16 @@
           ? `<span>离线缓存（最近一次同步）</span><span>土壤 · pH 为模拟</span>`
           : `<span>气温 · 湿度 · 风速 · 光照为气象实测</span><span>土壤 · pH 为模拟</span>`;
       } else {
-        foot.innerHTML = `<span>18 个监测点（演示）</span><span>5 s 模拟刷新</span>`;
+        foot.innerHTML = `<span>18 个监测点位（方案设计）</span><span>5 s 模拟刷新</span>`;
       }
     }
     const sub = $('#farmSub');
     if (sub) {
       sub.innerHTML = lb.real
-        ? `3 个地块 · 18 个监测点 · 每 5 秒刷新一次（<b>气温 / 湿度 / 风速 / 光照为 Open-Meteo 公开气象数据，按海拔订正；土壤含水率与 pH 待接传感器，为模拟值</b>）`
-        : `3 个地块 · 18 个监测点 · 每 5 秒刷新一次（<b>演示环境为模拟数据流，非真实传感器读数</b>）`;
+        ? (W.mode === 'cache'
+          ? `3 个地块 · 18 个监测点位（方案设计） · 每 5 秒刷新一次（<b>气象要素为离线缓存（最近一次同步）；土壤含水率与 pH 为模拟值</b>）`
+          : `3 个地块 · 18 个监测点位（方案设计） · 每 5 秒刷新一次（<b>气温 / 湿度 / 风速 / 光照为 Open-Meteo 公开气象数据，按海拔订正；土壤含水率与 pH 待接传感器，为模拟值</b>）`)
+        : `3 个地块 · 18 个监测点位（方案设计） · 每 5 秒刷新一次（<b>未连上气象接口，当前为模拟数据流；土壤含水率与 pH 亦为模拟值</b>）`;
     }
   }
 
@@ -138,7 +140,8 @@
         <h3>${esc(t.title)}</h3><p>${esc(t.desc)}</p><em>${esc(t.tag)}</em>
       </article>`).join('');
     $('#impactNums').innerHTML = D.impacts.map(i => `<div class="impact-num"><b>${esc(i.n)}</b><span>${esc(i.t)}</span><small>${esc(i.d)}</small></div>`).join('');
-    C.bar($('#impactChart'), [86, 174, 321, 705], ['8 月', '9 月', '10 月', '11 月'], { color: ['#8FB39A', '#7CA78D', '#5F8C70', '#2F6047'], h: 230, showValue: true });
+    const kd = D.kbDist;
+    C.bar($('#impactChart'), kd.map(x => x.v), kd.map(x => x.label), { color: ['#2F6047', '#3C6B52', '#4C7A5B', '#638C74', '#7CA78D', '#93B7A2', '#ABCBB8'], h: 230, showValue: true });
   }
 
   function renderHeroLive() {
@@ -223,6 +226,11 @@
 
   /* ───── 茶树认养 ───── */
   let variety = '全部', sortKey = 'default';
+  /* 份额制：每份对应成茶量由年产与总份额均摊，取整到 10g；
+     已领份额 = 示例台账预置值 + 本机认养记录（演示环境无后端，页面已标注口径） */
+  const shareG = t => Math.round(parseFloat(t.yield) * 1000 / t.shares / 10) * 10;
+  const localTaken = code => state.adopted.filter(r => r.treeCode === code).length;
+  const remainOf = t => t.shares - (t.taken || 0) - localTaken(t.code);
   function renderTrees() {
     const varieties = ['全部', ...new Set(D.trees.map(t => t.variety))];
     $('#varietyFilter').innerHTML = varieties.map(v => `<button class="chip ${v === variety ? 'is-active' : ''}" data-variety="${esc(v)}">${esc(v)}</button>`).join('');
@@ -236,8 +244,11 @@
     if (sortKey === 'altitude') list = [...list].sort((a, b) => b.alt - a.alt);
     if (sortKey === 'price') list = [...list].sort((a, b) => a.price - b.price);
 
-    $('#adoptSummary').innerHTML = `<div><b>${D.trees.length}</b>棵可认养茶树</div><div><b>${state.adopted.length}</b>我的认养</div><div><b>47</b>户合作茶农</div>`;
-    $('#treeGrid').innerHTML = list.map(t => `
+    $('#adoptSummary').innerHTML = `<div><b>${D.trees.length}</b>棵可认养茶树</div><div><b>${D.trees.reduce((s, t) => s + Math.max(0, remainOf(t)), 0)}</b>份剩余份额</div><button class="my-adopt-link" id="myAdoptBtn" type="button"><b>${state.adopted.length}</b>我的认养 ›</button>`;
+    $('#myAdoptBtn').addEventListener('click', openMyAdopts);
+    $('#treeGrid').innerHTML = list.map(t => {
+      const remain = remainOf(t);
+      return `
       <article class="tree-card" data-code="${t.code}">
         <div class="tree-visual" style="--tc:${t.color}">
           <span class="tree-code">${t.code}</span>
@@ -249,17 +260,19 @@
           <div class="tree-variety">${esc(t.variety)} · ${esc(t.aroma)}</div>
           <div class="tree-specs">
             <span>海拔<b>${t.alt} m</b></span><span>树龄<b>${t.age} 年</b></span>
-            <span>年产<b>${esc(t.yield)}</b></span><span>状态<b>${esc(t.status)}</b></span>
+            <span>年产<b>${esc(t.yield)}</b></span><span>份额<b>${remain > 0 ? `剩 ${remain} / ${t.shares}` : '已满'}</b></span>
           </div>
-          <div class="tree-foot"><div class="tree-price"><b>¥${t.price}</b><small>/ 年</small></div><div class="tree-cta">查看详情 →</div></div>
+          <div class="tree-foot"><div class="tree-price"><b>¥${t.price}</b><small>/ 份 · 年</small></div><div class="tree-cta">${remain > 0 ? '查看详情 →' : '已认领满'}</div></div>
         </div>
-      </article>`).join('');
+      </article>`;
+    }).join('');
     $$('#treeGrid .tree-card').forEach(c => c.addEventListener('click', () => openTree(c.dataset.code)));
   }
 
   function openTree(code) {
     const t = D.trees.find(x => x.code === code);
     if (!t) return;
+    const remain = remainOf(t);
     modal(`
       <div class="modal-head"><h3>${esc(t.name)}</h3><button class="modal-close">×</button></div>
       <div class="modal-body">
@@ -268,25 +281,32 @@
         <p class="prose">${esc(t.note)} 香气特征：${esc(t.aroma)}。认养期 1 年，春季单株采制后直寄到家，附全年生长数据记录与专属溯源码。</p>
         <div class="detail-grid">
           <div><label>海拔</label><b>${t.alt} m</b></div><div><label>树龄</label><b>${t.age} 年</b></div>
-          <div><label>预计成茶</label><b>${esc(t.yield)}</b></div><div><label>认养费</label><b>¥${t.price} / 年</b></div>
+          <div><label>预计成茶</label><b>${esc(t.yield)} / 年</b></div><div><label>认养费</label><b>¥${t.price} / 份</b></div>
         </div>
-        <div class="form-row"><label>认养人姓名</label><input id="adName" placeholder="请输入姓名" value=""></div>
+        <p style="font-size:12.5px;color:#5A6B60;margin:6px 0 0">本株共 ${t.shares} 份，每份对应约 <b>${shareG(t)}g</b> 当年成茶（按年产 ${esc(t.yield)} 均摊）与全年生长数据记录；本株剩余 <b>${Math.max(0, remain)}</b> 份可认领。</p>
+        <p style="font-size:12px;color:#5A6B60;margin-top:4px">价格口径：凤凰镇毛茶大宗均价约 257 元/kg（公开数据）· 单株采制茶零售 2,560–6,880 元/kg（商城同档）· 认养预售价介于两者——预售锁量、省去渠道与礼盒溢价。</p>
+        <div class="form-row"><label>认养人姓名（必填）</label><input id="adName" placeholder="请输入姓名" value=""></div>
         <div class="form-grid">
-          <div class="form-row"><label>所属学院 / 班级</label><input id="adDept" placeholder="如：物理与电子工程学院"></div>
+          <div class="form-row"><label>单位 / 身份（选填）</label><input id="adDept" placeholder="如：学校、企业、家庭或个人茶友"></div>
           <div class="form-row"><label>认养年限</label><select id="adYears"><option value="1">1 年</option><option value="2">2 年（9 折）</option><option value="3">3 年（85 折）</option></select></div>
         </div>
         <div class="form-row"><label>联系电话（选填，用于寄送春茶）</label><input id="adPhone" placeholder="仅本地保存，不上传"></div>
-        <p style="font-size:12px;color:#6B7C71;margin-top:4px">认养费分配：茶农 70% · 平台运维 20% · 学校乡村振兴公益基金 10%。本演示版不产生真实支付。</p>
+        <p style="font-size:12px;color:#5A6B60;margin-top:4px">认养费分配：茶农 70% · 平台运维 20% · 学校乡村振兴公益基金 10%。本演示版不产生真实支付，份额占用记录仅保存在本机浏览器。</p>
       </div>
-      <div class="modal-foot"><button class="btn btn-ghost modal-close">再看看</button><button class="btn btn-primary" id="adSubmit">确认认养 · ¥${t.price}</button></div>`);
+      <div class="modal-foot"><button class="btn btn-ghost modal-close">再看看</button><button class="btn btn-primary" id="adSubmit" ${remain > 0 ? '' : 'disabled'}>${remain > 0 ? `确认认养 · ¥${t.price} / 份` : '份额已认领满'}</button></div>`);
     $('#adSubmit').addEventListener('click', () => {
+      if (remainOf(t) <= 0) { toast('该茶树份额已认领满，看看其他茶树吧'); return; }
+      const name = $('#adName').value.trim();
+      if (!name) { toast('请填写认养人姓名'); $('#adName').focus(); return; }
       const years = +$('#adYears').value;
       const discount = years === 3 ? .85 : years === 2 ? .9 : 1;
-      const name = $('#adName').value.trim() || '认养人';
-      const code2 = 'YY-' + t.code.slice(3) + '-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 9000) + 1000);
-      const rec = { code: code2, tree: t.name, treeCode: t.code, name, dept: $('#adDept').value.trim(), years, price: Math.round(t.price * discount), date: new Date().toLocaleDateString('zh-CN') };
+      /* 证书编号确定性：树代号 + 年份 + 本机序号（含示例台账预置数），同一记录重开页面不变化 */
+      const seq = String((t.taken || 0) + localTaken(t.code) + 1).padStart(3, '0');
+      const code2 = 'YY-' + t.code.slice(3) + '-' + new Date().getFullYear() + '-' + seq;
+      const rec = { code: code2, tree: t.name, treeCode: t.code, shareG: shareG(t), name, dept: $('#adDept').value.trim(), years, price: Math.round(t.price * discount), date: new Date().toLocaleDateString('zh-CN') };
       state.adopted.push(rec); saveAdopt();
       showCert(rec);
+      renderTrees();
     });
   }
 
@@ -326,6 +346,7 @@
             <div><label>认养人</label><b>${esc(rec.name)}</b></div>
             <div><label>认养茶树</label><b>${esc(rec.tree)}</b></div>
             <div><label>茶树编号</label><b>${esc(rec.treeCode)}</b></div>
+            <div><label>本份成茶</label><b>约 ${rec.shareG || '—'} g / 年</b></div>
             <div><label>认养期限</label><b>${rec.years} 年 · 至 ${2026 + rec.years} 年春</b></div>
             <div><label>认养金额</label><b>¥${rec.price}</b></div>
             <div><label>签发日期</label><b>${esc(rec.date)}</b></div>
@@ -333,12 +354,31 @@
           <div class="qr"><canvas id="certQr" width="100" height="100" aria-label="溯源示意标识"></canvas></div>
           <p>溯源标识（示意） · 编号 ${esc(rec.code)}</p>
         </div>
-        <p style="font-size:12px;color:#6B7C71;text-align:center;margin-top:16px">本证书为竞赛演示生成，记录已保存在本地浏览器，不产生真实交易。</p>
+        <p style="font-size:12px;color:#5A6B60;text-align:center;margin-top:16px">本证书为竞赛演示生成，记录已保存在本地浏览器，不产生真实交易。证书可在「茶树认养 · 我的认养」中回看。</p>
       </div>
-      <div class="modal-foot"><button class="btn btn-ghost" id="certTrace">查看茶树溯源</button><button class="btn btn-primary modal-close">完成</button></div>`);
+      <div class="modal-foot"><button class="btn btn-ghost" id="certTrace">查看茶树溯源</button><button class="btn btn-ghost" id="certPrint">打印证书</button><button class="btn btn-primary modal-close">完成</button></div>`);
     drawMark($('#certQr'), rec.code);
-    $('#certTrace').addEventListener('click', () => { closeModal(); go('trace'); });
+    $('#certTrace').addEventListener('click', () => {
+      const batch = D.batchIndex && D.batchIndex[rec.treeCode];
+      closeModal(); go('trace');
+      if (batch) { $('#traceInput').value = batch; renderTrace(batch); }
+      else toast('该茶树当年批次尚未录入，可先用示例批次查看演示');
+    });
+    $('#certPrint').addEventListener('click', () => window.print());
     toast('认养成功，证书已生成');
+  }
+
+  /* 我的认养：历史记录回看，可重新打开证书 */
+  function openMyAdopts() {
+    const list = state.adopted;
+    const body = list.length ? `<ul class="cart-list">${list.map((r, i) => `<li>
+      <div class="ci"><strong>${esc(r.tree)}</strong><span>${esc(r.name)} · ${esc(r.code)} · ${esc(r.date)}</span></div>
+      <button class="btn btn-ghost btn-sm" data-cert="${i}">查看证书</button>
+    </li>`).join('')}</ul>` : '<div class="empty">还没有认养记录，去挑一棵茶树吧。</div>';
+    modal(`<div class="modal-head"><h3>我的认养</h3><button class="modal-close">×</button></div>
+      <div class="modal-body"><p style="font-size:12px;color:#5A6B60;margin:0 0 10px">记录仅保存在本机浏览器；本演示版不产生真实支付与发货。</p>${body}</div>
+      <div class="modal-foot"><button class="btn btn-primary modal-close">关闭</button></div>`);
+    $$('[data-cert]').forEach(b => b.addEventListener('click', () => showCert(state.adopted[+b.dataset.cert])));
   }
 
   /* ───── AI 助手 ───── */
@@ -371,7 +411,14 @@
     if (chatReady) return; chatReady = true;
     $('#quickList').innerHTML = K.QUICK.map(q => `<button class="quick-q" data-q="${esc(q)}">${esc(q)}</button>`).join('');
     $$('#quickList .quick-q').forEach(b => b.addEventListener('click', () => sendQ(b.dataset.q)));
-    pushMsg(`<p>你好，我是<strong>茶博士</strong>，凤凰单丛种植专家助手。</p><p>我内置 ${K.stats().total} 条覆盖${K.stats().cats.join('、')}的专家问答，<strong>断网也能用</strong>——山上没信号的时候，这正是我存在的理由。</p><p>直接问我病虫害、水肥、修剪、做青焙火，或者平台怎么运转都行。</p><span class="msg-source">本地知识库 · 离线可用</span>`);
+    // 自测用例：直接取知识库内已收录、且不与上方快捷问题重复的条目，任选一条都能命中
+    const cases = K.list.filter(x => !K.QUICK.includes(x.q)).slice(0, 10);
+    const box = $('#aiCases');
+    if (box) {
+      box.innerHTML = cases.map((x, i) => `<button class="case-chip" data-q="${esc(x.q)}" title="命中来源：${esc(x.src)}">${String(i + 1).padStart(2, '0')} ${esc(x.q)}</button>`).join('');
+      $$('#aiCases .case-chip').forEach(b => b.addEventListener('click', () => sendQ(b.dataset.q)));
+    }
+    pushMsg(`<p>你好，我是<strong>茶博士</strong>，凤凰单丛种植知识库检索助手。</p><p>我内置 ${K.stats().total} 条覆盖${K.stats().cats.join('、')}的问答，<strong>断网也能用</strong>——山上没信号的时候，这正是我存在的理由。</p><p>直接问我病虫害、水肥、修剪、做青焙火，或者平台怎么运转都行。每条答案都会标注命中的知识库来源。</p><span class="msg-source">本地知识库 · 离线可用</span>`);
     $('#chatForm').addEventListener('submit', e => { e.preventDefault(); sendQ($('#chatInput').value); });
   }
 
@@ -403,7 +450,7 @@
       { label: '茶农收益', value: 71, color: '#2F6047' },
       { label: '平台运维与物流', value: 19, color: '#8FB39A' },
       { label: '乡村振兴公益基金', value: 10, color: '#C0A062' }
-    ], { note: '对比：传统收购渠道茶农仅获得终端价约 38%，认养与直发模式提升至 71%。' });
+    ], { note: '方案设计值：认养与直发模式省去中间批发环节，茶农在终端售价中的占比据测算可达 71%；传统多级收购渠道参照行业通行结构估算约 38%。该比例为运营方案测算，非实测交易数据。' });
   }
   function openCart() {
     const items = Object.entries(state.cart).filter(([, n]) => n > 0).map(([id, n]) => ({ p: D.products.find(x => x.id === id), n })).filter(x => x.p);
@@ -459,6 +506,16 @@
     $('#archDiagram').innerHTML = D.arch.map(a => `<div class="arch-step"><em>${a.e}</em><h4>${esc(a.h)}</h4><p>${esc(a.p)}</p></div>`).join('');
     $('#specGrid').innerHTML = D.specs.map(s => `<div class="spec-item"><label>${esc(s.l)}</label><b>${esc(s.v)}</b><p>${esc(s.p)}</p></div>`).join('');
     $('#impactMini').innerHTML = D.impactMini.map(i => `<div><b>${esc(i.n)}</b><span>${esc(i.t)}</span></div>`).join('');
+    const dg = $('#dataNoteGrid');
+    if (dg) {
+      dg.innerHTML = D.dataNotes.map(n => {
+        const sim = /模拟|测算/.test(n.v);
+        return `<div class="note-item${sim ? ' is-sim' : ''}">
+          <div class="note-head"><span class="note-k">${esc(n.k)}</span><span class="note-v">${esc(n.v)}</span></div>
+          <p>${esc(n.d)}</p>
+        </div>`;
+      }).join('');
+    }
   }
 
   /* ───── 启动 ───── */

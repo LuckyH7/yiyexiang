@@ -7,6 +7,7 @@
 <meta name="theme-color" content="#1F4736">
 <title>一叶知乡 · 凤凰单丛茶数字认养与 AI 助农平台</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231F4736'/%3E%3Cpath d='M8 22c0-8 6-13 16-13 0 9-5 15-13 15' fill='none' stroke='%23C0A062' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M11 25c1-5 4-8 8-10' stroke='%23C0A062' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="manifest" href="assets/manifest.json">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -67,7 +68,7 @@
           <button class="btn btn-ghost" data-nav="ai">问问 AI 茶博士</button>
         </div>
         <div class="hero-stats" id="heroStats"></div>
-        <p class="hero-stats-note">以上为试运行测算口径 · 演示环境，非真实业务台账</p>
+        <p class="hero-stats-note">凤凰镇 2025 年公开统计数据 · 来源：潮州市人民政府门户网站、人民网广东频道</p>
       </div>
 
       <aside class="hero-panel" aria-label="茶园实时概况">
@@ -90,10 +91,10 @@
     <div class="photo-band-mask"></div>
     <div class="photo-band-copy">
       <p class="eyebrow">潮州 · 凤凰山 · 海拔 1,150 米</p>
-      <h2>一座山，一片叶，一群人</h2>
-      <p>凤凰镇 8 万亩茶园，47 户签约茶农，126 人次学生上山实践。<br>我们把这些真实的人和事，写进了同一套数据里。</p>
+      <h2>一座山，一片叶，三万人</h2>
+      <p>凤凰镇 9.11 万亩茶园，3.5 万人以茶为生，一年产出一万吨干毛茶。<br>我们想做的，是把这 9.11 万亩里的某一棵具体的树，交到一个具体的人手上。</p>
     </div>
-    <div class="photo-band-tag">3 个地块 · 18 个监测节点</div>
+    <div class="photo-band-tag">3 个示范地块 · 18 个监测点位（方案设计）</div>
   </div>
 
   <!-- 痛点 → 解法 -->
@@ -101,7 +102,7 @@
     <div class="section-head">
       <p class="eyebrow">为什么做这件事</p>
       <h2>茶山上的三个难题</h2>
-      <p class="section-sub">我们走访凤凰镇 3 个行政村、访谈 26 户茶农，反复听到的是同样三句话。</p>
+      <p class="section-sub">产业很大，但价值分配不均、真伪难辨、技术下沉不足——这三个问题在公开数据与茶区普遍报道中都能找到印证。</p>
     </div>
     <div class="pain-grid" id="painGrid"></div>
   </div>
@@ -116,23 +117,26 @@
     <div class="tech-grid" id="techGrid"></div>
   </div>
 
-  <!-- 成效 -->
+  <!-- 作品构成 -->
   <div class="section">
     <div class="section-head">
-      <p class="eyebrow">项目成效</p>
-      <h2>数字里的茶山</h2>
-      <p class="section-sub">以下数据来自平台试运行 90 天的统计（2026.08—2026.11）。</p>
+      <p class="eyebrow">作品构成</p>
+      <h2>每一处都点得开、查得到</h2>
+      <p class="section-sub">这四个数字不是运营数据，是这个作品里能当场清点的东西；右侧为知识库 38 条问答的真实类目分布。运营侧的比例与规模均为方案测算，已在下文"数据与方法"逐项标明。</p>
     </div>
     <div class="impact-wrap">
       <div class="impact-nums" id="impactNums"></div>
-      <div class="impact-chart" id="impactChart"></div>
+      <div class="impact-chart">
+        <div class="chart-cap"><h4>知识库 38 条问答 · 类目分布</h4><span>可逐条检索验证</span></div>
+        <div id="impactChart"></div>
+      </div>
     </div>
   </div>
 
   <div class="cta-band">
     <h2>让下一棵茶树，因为你的一个想法而被认领</h2>
-    <p>平台已开放认养，认养费 70% 直达茶农，10% 进入学校乡村振兴公益基金。</p>
-    <button class="btn btn-primary" data-nav="adopt">立即认养</button>
+    <p>方案设计中，认养费 70% 直达茶农，10% 进入学校乡村振兴公益基金。</p>
+    <button class="btn btn-primary" data-nav="adopt">看看怎么认养</button>
   </div>
 </section>
 
@@ -142,7 +146,7 @@
     <div>
       <p class="eyebrow">智慧茶园 · 环境监测</p>
       <h1>茶山此刻的呼吸</h1>
-      <p class="page-sub" id="farmSub">3 个地块 · 18 个监测点 · 每 5 秒刷新一次</p>
+      <p class="page-sub" id="farmSub">3 个地块 · 18 个监测点位（方案设计） · 每 5 秒刷新一次</p>
     </div>
     <div class="plot-switch" id="plotSwitch"></div>
   </div>
@@ -184,6 +188,7 @@
       <div class="table-wrap">
         <table class="data-table" id="plotTable"></table>
       </div>
+      <p class="card-note">地块面积、株数为方案设计示例，用于演示监测与告警逻辑；实际部署以茶农确权地块与实测株数为准。</p>
     </div>
   </div>
 
@@ -202,7 +207,8 @@
     <div>
       <p class="eyebrow">茶树认养</p>
       <h1>选一棵属于你的老丛</h1>
-      <p class="page-sub">每棵茶树都有唯一编号与溯源码，认养期 1 年，春季采制后直寄到家。</p>
+      <p class="page-sub">每棵茶树的年产成茶按份认领，每份都有唯一编号与溯源码，认养期 1 年，春季采制后直寄到家。</p>
+      <p class="page-note">演示环境：认养记录保存在本机浏览器，不产生支付与发货。生产版会把认养单写入「人—树—年」台账并推送至对应茶农。</p>
     </div>
     <div class="adopt-summary" id="adoptSummary"></div>
   </div>
@@ -223,9 +229,9 @@
 <section class="view" id="view-ai">
   <div class="page-head">
     <div>
-      <p class="eyebrow">AI 种植助手</p>
+      <p class="eyebrow">农技知识库 · 检索式问答</p>
       <h1>茶博士，随时在山上</h1>
-      <p class="page-sub">基于凤凰单丛种植知识库（38 条专家问答）与潮州气象数据构建，离线可用。</p>
+      <p class="page-sub">38 条凤凰单丛农技问答全部内置在页面中，首次打开后缓存到本机，断网仍可打开并检索；每条答案标注命中来源，低于阈值就直说"超出知识库范围"。</p>
     </div>
   </div>
 
@@ -234,24 +240,31 @@
       <h4>你可以这样问</h4>
       <div class="quick-list" id="quickList"></div>
       <div class="ai-note">
-        <strong>技术说明</strong>
-        <p>采用本地知识库 + 关键词加权检索（TF-IDF 简化版），无需联网调用外部大模型，保障茶农在山区弱网环境下正常使用。</p>
+        <strong>技术说明（不夸大）</strong>
+        <p>这是<strong>检索式问答</strong>，不是大语言模型：把 38 条农技问答存在本地，用关键词加权（TF-IDF 简化版）匹配最相关的一条，命中即标注来源，低于阈值则明确告知"超出知识库范围"。选它的理由很实际——山区没信号时，只有本地检索还能用。</p>
       </div>
     </aside>
 
-    <div class="chat">
-      <div class="chat-head">
-        <div class="chat-avatar">茶</div>
-        <div>
-          <strong>茶博士</strong>
-          <span>凤凰单丛种植专家助手 · 在线</span>
+    <div class="chat-col">
+      <div class="chat">
+        <div class="chat-head">
+          <div class="chat-avatar">茶</div>
+          <div>
+            <strong>茶博士</strong>
+            <span>凤凰单丛种植知识库 · 本地检索</span>
+          </div>
         </div>
+        <div class="chat-body" id="chatBody"></div>
+        <form class="chat-input" id="chatForm">
+          <input id="chatInput" type="text" placeholder="例如：蜜兰香叶片发黄卷曲是什么病？" autocomplete="off">
+          <button type="submit" class="btn btn-primary btn-sm">发送</button>
+        </form>
       </div>
-      <div class="chat-body" id="chatBody"></div>
-      <form class="chat-input" id="chatForm">
-        <input id="chatInput" type="text" placeholder="例如：蜜兰香叶片发黄卷曲是什么病？" autocomplete="off">
-        <button type="submit" class="btn btn-primary btn-sm">发送</button>
-      </form>
+
+      <div class="case-panel">
+        <div class="chart-cap"><h4>自测用例 · 任选一条，看它答不答得上来</h4><span>全部为知识库内条目，点开即可验证</span></div>
+        <div class="case-list is-row" id="aiCases"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -262,9 +275,10 @@
     <div>
       <p class="eyebrow">助农商城</p>
       <h1>从茶山直发到你手里</h1>
-      <p class="page-sub">去中间环节，茶农收益占比从 38% 提升至 71%。</p>
+      <p class="page-sub">省去中间批发环节，茶农在终端售价中的占比据方案测算可达 71%（传统多级渠道参照行业通行结构估算约 38%）。</p>
+      <p class="page-note">演示环境：下单与结算不产生真实支付与发货，收益分配比例随页面标注为测算值。</p>
     </div>
-    <div class="shop-notice">全场顺丰包邮 · 支持 7 天无理由</div>
+    <div class="shop-notice">生产版服务承诺：顺丰包邮 · 7 天无理由 · 本演示版不实际发货</div>
   </div>
 
   <div class="shop-grid" id="shopGrid"></div>
@@ -293,6 +307,7 @@
     <button class="btn btn-primary" type="submit">查询溯源</button>
     <button class="btn btn-ghost" type="button" id="traceSample">填入示例批次</button>
   </form>
+  <p class="page-note" style="margin-top:-6px">演示数据已内置 4 个可查批次：FC-2026-0427（宋种春茶）· FC-2026-0418（鸭屎香春茶）· FC-2026-0512（蜜兰香春茶）· FC-2026-0908（黄枝香秋茶），与认养茶树 HS-WD-001 至 HS-WD-004 对应。</p>
 
   <div id="traceResult"></div>
 </section>
@@ -310,17 +325,18 @@
   <div class="grid-2">
     <div class="card">
       <div class="card-head"><h3>项目背景</h3></div>
-      <p class="prose">潮州凤凰镇是凤凰单丛茶的原产地，全镇茶叶种植面积逾 8 万亩。但产业长期面临"三难"：茶农卖茶靠熟人、好茶难卖出好价、消费者难辨真伪。与此同时，山区茶农缺乏数字化工具，病虫害防治依赖经验，抗风险能力弱。</p>
-      <p class="prose">本项目由韩山师范学院学生团队发起，以"数字认养"重构产销关系，以"数据监测 + AI 问答"提升种植水平，以"全链路溯源"重建消费信任，探索一条大学生可参与、茶农可受益、模式可复制的乡村振兴路径。</p>
+      <p class="prose">潮州凤凰镇是凤凰单丛茶的原产地。据潮州市人民政府门户网站与人民网广东频道公开报道，2025 年全镇茶园面积 9.11 万亩、年产干毛茶 10,080 吨、毛茶产值约 26 亿元，涉茶从业者 3.5 万人，茶农人均涉茶收入 3.5 万元。盘子很大，但价值分配与信息透明度并未同步跟上。</p>
+      <p class="prose">本项目由韩山师范学院学生独立开发，以"数字认养"重构产销关系，以"监测 + 本地知识库"提升种植水平，以"全链路溯源"重建消费信任，探索一条大学生可参与、茶农可受益、模式可复制的乡村振兴路径。<strong>本版本为方案设计与功能演示，运营侧数字为测算值，不谎称已有真实交易。</strong></p>
     </div>
     <div class="card">
-      <div class="card-head"><h3>运营模式</h3></div>
+      <div class="card-head"><h3>运营模式（方案设计）</h3></div>
       <ul class="prose-list">
         <li><strong>认养分成</strong>：认养费 70% 直达茶农，20% 用于平台运维与物流，10% 注入学校乡村振兴公益基金。</li>
-        <li><strong>校园联动</strong>：依托学校社会实践与劳动教育课程，组织学生上山参与采制、直播带货。</li>
+        <li><strong>校园联动</strong>：依托学校社会实践与劳动教育课程，组织学生上山参与采制、内容记录与传播。</li>
         <li><strong>公益反哺</strong>：公益基金用于茶农数字化培训与困难茶农帮扶。</li>
         <li><strong>可持续性</strong>：平台无重资产投入，边际成本极低，可向周边茶区复制。</li>
       </ul>
+      <p class="card-note">以上为方案设计值，尚未开展真实交易；测算依据见下方"数据与方法"。</p>
     </div>
   </div>
 
@@ -345,16 +361,26 @@
     <div class="card">
       <div class="card-head"><h3>创新点</h3></div>
       <ol class="prose-list ordered">
-        <li><strong>产销关系重构</strong>：把"买茶"变成"认养一棵树"，预付锁定茶农收益，规避价格波动风险。</li>
-        <li><strong>弱网可用的 AI</strong>：知识库本地化部署，山区无网络时仍可问答，解决真实场景痛点。</li>
-        <li><strong>可信溯源</strong>：一树一码、一批一码，生长数据与制茶工序全记录。</li>
-        <li><strong>学生深度参与</strong>：把乡村振兴变成可修学分的实践课堂。</li>
+        <li><strong>产销关系重构</strong>：把"买茶"变成"认养一棵树"，预付锁定茶农收益，规避价格波动与滞销风险。</li>
+        <li><strong>弱网可用的知识库</strong>：38 条农技问答本地化部署，山区无网络时仍可检索，命中即标来源，答不准就说不准。</li>
+        <li><strong>可信溯源</strong>：一树一码、一批一码，生长数据与 8 道制茶工序全记录。</li>
+        <li><strong>学生深度参与</strong>：从产品设计到前端实现到知识库整理，全部由学生独立完成，是可修学分的实践课堂。</li>
       </ol>
     </div>
     <div class="card">
-      <div class="card-head"><h3>社会效益</h3></div>
+      <div class="card-head"><h3>产业背景（公开数据）</h3></div>
       <div class="impact-mini" id="impactMini"></div>
+      <p class="card-note">2025 年数据 · 来源：潮州市人民政府门户网站、人民网广东频道</p>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <h3>数据与方法：每个数字都说清来处</h3>
+      <span class="card-tag">口径公开</span>
+    </div>
+    <div class="note-grid" id="dataNoteGrid"></div>
+    <p class="card-note">我们不做"看起来很像真的"的数据。凡是无法亲测的，一律标注为模拟或方案测算——这既是诚实，也是这件作品能被检验的前提。</p>
   </div>
 
   <div class="card">
@@ -374,7 +400,7 @@
     </div>
     <div>
       <p class="footer-meta">2026 韩山师范学院"数智新技艺"作品遴选 · 自主研发应用类</p>
-      <p class="footer-meta">本平台为教学与竞赛演示用途，数据含模拟成分</p>
+      <p class="footer-meta">产业数据取自政府与媒体公开报道；气象数据为实时接口；土壤与业务数据为模拟 / 方案测算，详见"关于项目 · 数据与方法"</p>
     </div>
   </div>
 </footer>
@@ -387,5 +413,14 @@
 <script src="assets/js/kb.js"></script>
 <script src="assets/js/weather.js"></script>
 <script src="assets/js/app.js"></script>
+<script>
+/* 离线缓存：首次打开后把页面与资源存入本机，断网仍可打开。
+   不支持或被浏览器拒绝时静默跳过，不影响正常使用。 */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
 </body>
 </html>
