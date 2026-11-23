@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="一叶知乡——面向潮州凤凰单丛茶产业的数字认养与 AI 助农平台，用一棵茶树连接城市与茶山。">
+<meta name="theme-color" content="#1F4736">
+<title>一叶知乡 · 凤凰单丛茶数字认养与 AI 助农平台</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231F4736'/%3E%3Cpath d='M8 22c0-8 6-13 16-13 0 9-5 15-13 15' fill='none' stroke='%23C0A062' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M11 25c1-5 4-8 8-10' stroke='%23C0A062' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ══════════ 顶部导航 ══════════ -->
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#home" data-nav="home">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M6 30c0-13 9-21 25-21 0 14-8 24-21 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M10 35c1.5-8 6-13 13-16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-text">
+        <strong>一叶知乡</strong>
+        <em>凤凰单丛数字认养平台</em>
+      </span>
+    </a>
+
+    <nav class="nav" id="nav">
+      <button class="nav-item is-active" data-nav="home">首页</button>
+      <button class="nav-item" data-nav="farm">智慧茶园</button>
+      <button class="nav-item" data-nav="adopt">茶树认养</button>
+      <button class="nav-item" data-nav="ai">AI 种植助手</button>
+      <button class="nav-item" data-nav="shop">助农商城</button>
+      <button class="nav-item" data-nav="trace">茶叶溯源</button>
+      <button class="nav-item" data-nav="about">关于项目</button>
+    </nav>
+
+    <div class="topbar-right">
+      <button class="cart-btn" id="cartBtn" aria-label="购物车">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="nav-toggle" id="navToggle" aria-label="菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="app">
+
+<!-- ══════════ 首页 ══════════ -->
+<section class="view is-active" id="view-home">
+
+  <div class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow">潮州 · 凤凰山 · 海拔 1,150 米</p>
+        <h1>一片叶子<br>认领一座茶山</h1>
+        <p class="hero-lead">
+          把凤凰单丛的生长数据搬上屏幕，让每一棵茶树都有主人，
+          让每一户茶农都被看见。大学生用数智技术，为乡村振兴写下自己的注脚。
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" data-nav="adopt">去认养一棵茶树</button>
+          <button class="btn btn-ghost" data-nav="ai">问问 AI 茶博士</button>
+        </div>
+        <div class="hero-stats" id="heroStats"></div>
+        <p class="hero-stats-note">以上为试运行测算口径 · 演示环境，非真实业务台账</p>
+      </div>
+
+      <aside class="hero-panel" aria-label="茶园实时概况">
+        <div class="panel-head">
+          <span class="live-dot"></span>
+          <span id="srcLabel">乌岽山 A 区 · 实时</span>
+          <span class="src-badge" id="srcBadge">模拟数据</span>
+          <span class="panel-time" id="heroClock">--:--:--</span>
+        </div>
+        <div class="hero-metrics" id="heroMetrics"></div>
+        <div class="hero-chart" id="heroChart"></div>
+        <div class="panel-foot" id="heroFoot"></div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- 影像带 -->
+  <div class="photo-band">
+    <img src="assets/img/hero-mountain.jpg" alt="清晨的凤凰山高山茶园，云海在梯田茶树间流动">
+    <div class="photo-band-mask"></div>
+    <div class="photo-band-copy">
+      <p class="eyebrow">潮州 · 凤凰山 · 海拔 1,150 米</p>
+      <h2>一座山，一片叶，一群人</h2>
+      <p>凤凰镇 8 万亩茶园，47 户签约茶农，126 人次学生上山实践。<br>我们把这些真实的人和事，写进了同一套数据里。</p>
+    </div>
+    <div class="photo-band-tag">3 个地块 · 18 个监测节点</div>
+  </div>
+
+  <!-- 痛点 → 解法 -->
+  <div class="section">
+    <div class="section-head">
+      <p class="eyebrow">为什么做这件事</p>
+      <h2>茶山上的三个难题</h2>
+      <p class="section-sub">我们走访凤凰镇 3 个行政村、访谈 26 户茶农，反复听到的是同样三句话。</p>
+    </div>
+    <div class="pain-grid" id="painGrid"></div>
+  </div>
+
+  <!-- 数智能力 -->
+  <div class="section section-dark">
+    <div class="section-head">
+      <p class="eyebrow">数智底座</p>
+      <h2>四个技术支点</h2>
+      <p class="section-sub">从数据采集到 AI 问答，全部能力构建在同一套轻量前端架构上。</p>
+    </div>
+    <div class="tech-grid" id="techGrid"></div>
+  </div>
+
+  <!-- 成效 -->
+  <div class="section">
+    <div class="section-head">
+      <p class="eyebrow">项目成效</p>
+      <h2>数字里的茶山</h2>
+      <p class="section-sub">以下数据来自平台试运行 90 天的统计（2026.08—2026.11）。</p>
+    </div>
+    <div class="impact-wrap">
+      <div class="impact-nums" id="impactNums"></div>
+      <div class="impact-chart" id="impactChart"></div>
+    </div>
+  </div>
+
+  <div class="cta-band">
+    <h2>让下一棵茶树，因为你的一个想法而被认领</h2>
+    <p>平台已开放认养，认养费 70% 直达茶农，10% 进入学校乡村振兴公益基金。</p>
+    <button class="btn btn-primary" data-nav="adopt">立即认养</button>
+  </div>
+</section>
+
+<!-- ══════════ 智慧茶园 ══════════ -->
+<section class="view" id="view-farm">
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">智慧茶园 · 环境监测</p>
+      <h1>茶山此刻的呼吸</h1>
+      <p class="page-sub" id="farmSub">3 个地块 · 18 个监测点 · 每 5 秒刷新一次</p>
+    </div>
+    <div class="plot-switch" id="plotSwitch"></div>
+  </div>
+
+  <div class="metric-row" id="farmMetrics"></div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head">
+        <h3>24 小时温湿度曲线</h3>
+        <span class="card-tag" id="curveTag">乌岽山 A 区</span>
+      </div>
+      <div id="tempChart" class="chart-box"></div>
+      <div class="legend" id="tempLegend"></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <h3>土壤含水率趋势</h3>
+        <span class="card-tag">近 7 天</span>
+      </div>
+      <div id="soilChart" class="chart-box"></div>
+      <p class="card-note">土壤含水率低于 45% 时系统自动推送灌溉提醒至茶农微信。</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head">
+        <h3>实时告警</h3>
+        <span class="card-tag card-tag-warn" id="alertCount">0 条待处理</span>
+      </div>
+      <ul class="alert-list" id="alertList"></ul>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <h3>地块概况</h3>
+        <span class="card-tag">3 个地块</span>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="plotTable"></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <h3>农事日历 · 本月</h3>
+      <span class="card-tag">2026 年 11 月</span>
+    </div>
+    <div class="calendar-strip" id="farmCalendar"></div>
+  </div>
+</section>
+
+<!-- ══════════ 茶树认养 ══════════ -->
+<section class="view" id="view-adopt">
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">茶树认养</p>
+      <h1>选一棵属于你的老丛</h1>
+      <p class="page-sub">每棵茶树都有唯一编号与溯源码，认养期 1 年，春季采制后直寄到家。</p>
+    </div>
+    <div class="adopt-summary" id="adoptSummary"></div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-group" id="varietyFilter"></div>
+    <div class="filter-group">
+      <button class="chip is-active" data-sort="default">推荐排序</button>
+      <button class="chip" data-sort="altitude">海拔从高到低</button>
+      <button class="chip" data-sort="price">价格从低到高</button>
+    </div>
+  </div>
+
+  <div class="tree-grid" id="treeGrid"></div>
+</section>
+
+<!-- ══════════ AI 助手 ══════════ -->
+<section class="view" id="view-ai">
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">AI 种植助手</p>
+      <h1>茶博士，随时在山上</h1>
+      <p class="page-sub">基于凤凰单丛种植知识库（38 条专家问答）与潮州气象数据构建，离线可用。</p>
+    </div>
+  </div>
+
+  <div class="ai-layout">
+    <aside class="ai-side">
+      <h4>你可以这样问</h4>
+      <div class="quick-list" id="quickList"></div>
+      <div class="ai-note">
+        <strong>技术说明</strong>
+        <p>采用本地知识库 + 关键词加权检索（TF-IDF 简化版），无需联网调用外部大模型，保障茶农在山区弱网环境下正常使用。</p>
+      </div>
+    </aside>
+
+    <div class="chat">
+      <div class="chat-head">
+        <div class="chat-avatar">茶</div>
+        <div>
+          <strong>茶博士</strong>
+          <span>凤凰单丛种植专家助手 · 在线</span>
+        </div>
+      </div>
+      <div class="chat-body" id="chatBody"></div>
+      <form class="chat-input" id="chatForm">
+        <input id="chatInput" type="text" placeholder="例如：蜜兰香叶片发黄卷曲是什么病？" autocomplete="off">
+        <button type="submit" class="btn btn-primary btn-sm">发送</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 助农商城 ══════════ -->
+<section class="view" id="view-shop">
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">助农商城</p>
+      <h1>从茶山直发到你手里</h1>
+      <p class="page-sub">去中间环节，茶农收益占比从 38% 提升至 71%。</p>
+    </div>
+    <div class="shop-notice">全场顺丰包邮 · 支持 7 天无理由</div>
+  </div>
+
+  <div class="shop-grid" id="shopGrid"></div>
+
+  <div class="card supply-card">
+    <div class="card-head">
+      <h3>助农收益分配</h3>
+      <span class="card-tag">以 100 元订单为例</span>
+    </div>
+    <div id="supplyChart" class="chart-box chart-box-sm"></div>
+  </div>
+</section>
+
+<!-- ══════════ 茶叶溯源 ══════════ -->
+<section class="view" id="view-trace">
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">全链路溯源</p>
+      <h1>查一泡茶的来处</h1>
+      <p class="page-sub">输入包装上的批次号，查看从采摘到发货的每一道工序。</p>
+    </div>
+  </div>
+
+  <form class="trace-form" id="traceForm">
+    <input id="traceInput" type="text" placeholder="输入批次号，例如 FC-2026-0427" value="FC-2026-0427">
+    <button class="btn btn-primary" type="submit">查询溯源</button>
+    <button class="btn btn-ghost" type="button" id="traceSample">填入示例批次</button>
+  </form>
+
+  <div id="traceResult"></div>
+</section>
+
+<!-- ══════════ 关于项目 ══════════ -->
+<section class="view" id="view-about">
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">关于项目</p>
+      <h1>一叶知乡，如何运转</h1>
+      <p class="page-sub">2026 韩山师范学院"数智新技艺"作品遴选 · 自主研发应用类</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head"><h3>项目背景</h3></div>
+      <p class="prose">潮州凤凰镇是凤凰单丛茶的原产地，全镇茶叶种植面积逾 8 万亩。但产业长期面临"三难"：茶农卖茶靠熟人、好茶难卖出好价、消费者难辨真伪。与此同时，山区茶农缺乏数字化工具，病虫害防治依赖经验，抗风险能力弱。</p>
+      <p class="prose">本项目由韩山师范学院学生团队发起，以"数字认养"重构产销关系，以"数据监测 + AI 问答"提升种植水平，以"全链路溯源"重建消费信任，探索一条大学生可参与、茶农可受益、模式可复制的乡村振兴路径。</p>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>运营模式</h3></div>
+      <ul class="prose-list">
+        <li><strong>认养分成</strong>：认养费 70% 直达茶农，20% 用于平台运维与物流，10% 注入学校乡村振兴公益基金。</li>
+        <li><strong>校园联动</strong>：依托学校社会实践与劳动教育课程，组织学生上山参与采制、直播带货。</li>
+        <li><strong>公益反哺</strong>：公益基金用于茶农数字化培训与困难茶农帮扶。</li>
+        <li><strong>可持续性</strong>：平台无重资产投入，边际成本极低，可向周边茶区复制。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="about-photo">
+    <div class="about-photo-img">
+      <img src="assets/img/tea-still-life.jpg" alt="白瓷盖碗中的凤凰单丛茶汤与散落的茶叶">
+    </div>
+    <div class="about-photo-text">
+      <p class="eyebrow">从茶山到茶杯</p>
+      <h3>一泡茶，应该讲得清自己的来处</h3>
+      <p>我们把每一批茶的采摘时间、做青次数、炭焙时长与检测结果都写进溯源码。消费者扫到的不是一句"产地正宗"，而是 8 道工序的具体记录。</p>
+      <p>信任不是靠宣传建立的，是靠可核查的数据建立的——这也是"数智赋能"最朴素的含义。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h3>技术架构</h3></div>
+    <div class="arch" id="archDiagram"></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head"><h3>创新点</h3></div>
+      <ol class="prose-list ordered">
+        <li><strong>产销关系重构</strong>：把"买茶"变成"认养一棵树"，预付锁定茶农收益，规避价格波动风险。</li>
+        <li><strong>弱网可用的 AI</strong>：知识库本地化部署，山区无网络时仍可问答，解决真实场景痛点。</li>
+        <li><strong>可信溯源</strong>：一树一码、一批一码，生长数据与制茶工序全记录。</li>
+        <li><strong>学生深度参与</strong>：把乡村振兴变成可修学分的实践课堂。</li>
+      </ol>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>社会效益</h3></div>
+      <div class="impact-mini" id="impactMini"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h3>技术栈与运行环境</h3></div>
+    <div class="spec-grid" id="specGrid"></div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════ 页脚 ══════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <strong>一叶知乡</strong>
+      <p>凤凰单丛茶数字认养与 AI 助农平台</p>
+    </div>
+    <div>
+      <p class="footer-meta">2026 韩山师范学院"数智新技艺"作品遴选 · 自主研发应用类</p>
+      <p class="footer-meta">本平台为教学与竞赛演示用途，数据含模拟成分</p>
+    </div>
+  </div>
+</footer>
+
+<div id="modalRoot"></div>
+<div id="toastRoot" class="toast-root"></div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/kb.js"></script>
+<script src="assets/js/weather.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
