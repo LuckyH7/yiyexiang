@@ -297,15 +297,21 @@
         <p style="font-size:12px;color:#5A6B60;margin-top:4px">认养费分配：茶农 71% · 平台运维 19% · 学校乡村振兴公益基金 10%。本演示版不产生真实支付，提交即表示同意认养记录（含联系电话）仅保存在本机浏览器。</p>
       </div>
       <div class="modal-foot"><button class="btn btn-ghost modal-close">再看看</button><button class="btn btn-primary" id="adSubmit" ${remain > 0 ? '' : 'disabled'}>${remain > 0 ? `确认认养 · ¥${t.price} / 份` : '份额已认领满'}</button></div>`);
+    $('#adYears').addEventListener('change', () => {
+      const y = +$('#adYears').value, d = y === 3 ? .85 : y === 2 ? .9 : 1;
+      const btn = $('#adSubmit');
+      if (remainOf(t) > 0) btn.textContent = y === 1 ? `确认认养 · ¥${t.price} / 份` : `确认认养 · ¥${Math.round(t.price * d)} / 份（${y} 年）`;
+    });
     $('#adSubmit').addEventListener('click', () => {
       if (remainOf(t) <= 0) { toast('该茶树份额已认领满，看看其他茶树吧'); return; }
       const name = $('#adName').value.trim();
       if (!name) { toast('请填写认养人姓名'); $('#adName').focus(); return; }
       const years = +$('#adYears').value;
       const discount = years === 3 ? .85 : years === 2 ? .9 : 1;
-      /* 证书编号确定性：树代号 + 年份 + 本机序号（含示例台账预置数），同一记录重开页面不变化 */
+      /* 证书编号确定性：树代号 + 认养年月日 + 本机序号（含示例台账预置数），同一记录重开页面不变化；日期段使不同设备同日认养也不易撞号 */
+      const now = new Date();
       const seq = String((t.taken || 0) + localTaken(t.code) + 1).padStart(3, '0');
-      const code2 = 'YY-' + t.code.slice(3) + '-' + new Date().getFullYear() + '-' + seq;
+      const code2 = 'YY-' + t.code.slice(3) + '-' + now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0') + '-' + seq;
       const rec = { code: code2, tree: t.name, treeCode: t.code, shareG: shareG(t), name, dept: $('#adDept').value.trim(), phone: $('#adPhone').value.trim(), years, price: Math.round(t.price * discount), date: new Date().toLocaleDateString('zh-CN') };
       state.adopted.push(rec); saveAdopt();
       showCert(rec);
@@ -546,6 +552,7 @@
           <div class="split-row"><span>茶农</span><small>71%</small><b>¥${o.farmer}</b></div>
           <div class="split-row"><span>平台运维与物流</span><small>19%</small><b>¥${o.ops}</b></div>
           <div class="split-row"><span>乡村振兴公益基金</span><small>10%</small><b>¥${o.fund}</b></div>
+          <p class="page-note" style="margin:6px 0 0;font-size:11px">分配金额按元取整，与比例可能相差 1 元。</p>
         </div>
         ${b
         ? `<div class="order-trace"><span>对应批次 <b>${esc(o.batch)}</b> · ${esc(b.name)}</span><button class="btn btn-ghost btn-sm" id="ordTrace" type="button">查看溯源</button></div>`

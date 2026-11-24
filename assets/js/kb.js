@@ -90,7 +90,7 @@
     if (best.score < 11) {
       return { entry: null, conf: 0, suggestions: QUICK.slice(0, 3) };
     }
-    return { entry: best.entry, conf: Math.max(62, conf), related: scored.slice(1, 3).map(x => x.entry.q) };
+    return { entry: best.entry, conf: conf, related: scored.slice(1, 3).map(x => x.entry.q) };
   }
 
   function fallbackHTML(res) {
