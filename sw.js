@@ -6,7 +6,7 @@
    自身的降级逻辑处理（缓存值 / 模拟值）。
    ═══════════════════════════════════════════ */
 
-const VERSION = 'yiyexiang-v2';
+const VERSION = 'yiyexiang-v3';
 const CORE = [
   './',
   './index.html',
